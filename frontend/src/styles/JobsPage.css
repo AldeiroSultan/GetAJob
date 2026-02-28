@@ -1,0 +1,98 @@
+.jobs-page {
+    min-height: 100vh;
+}
+
+.jobs-header {
+    background: linear-gradient(135deg, #1a1a2e, #0f3460);
+    color: white;
+    padding: 60px 40px;
+    text-align: center;
+}
+
+.jobs-header h1 {
+    font-size: 40px;
+    margin-bottom: 8px;
+}
+
+.jobs-header p {
+    font-size: 18px;
+    color: #ccc;
+}
+
+.jobs-search {
+    background: white;
+    padding: 24px 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.search-form {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.search-form input,
+.search-form select {
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    flex: 1;
+    min-width: 160px;
+}
+
+.search-form input:focus,
+.search-form select:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+.search-form button {
+    padding: 10px 24px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.search-form button:hover {
+    background-color: #357abd;
+}
+
+.reset-btn {
+    background-color: #888 !important;
+}
+
+.reset-btn:hover {
+    background-color: #666 !important;
+}
+
+.jobs-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 40px;
+}
+
+.jobs-status {
+    text-align: center;
+    color: #666;
+    font-size: 18px;
+    margin-top: 60px;
+}
+
+.jobs-count {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px;
+}

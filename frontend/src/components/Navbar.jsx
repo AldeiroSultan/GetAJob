@@ -29,11 +29,11 @@ function Navbar() {
                 )}
 
                 {user && user.role === 'employer' && (
-                    <Link to="/employer/dashboard">Dashboard</Link>
+                    <Link to="/employer/dashboard">My Dashboard</Link>
                 )}
 
                 {user && user.role === 'admin' && (
-                    <Link to="/admin/dashboard">Admin</Link>
+                    <Link to="/admin/dashboard">Admin Panel</Link>
                 )}
 
                 {user && (

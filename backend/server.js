@@ -9,7 +9,8 @@ dotenv.config();
 connectDB();
 
 const app = express();
-const contactRoutes = require('./routes/contactRoutes')
+const contactRoutes = require('./routes/contactRoutes');
+const jobRoutes = require('./routes/jobRoutes');
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -17,7 +18,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
-app.use('/api', contactRoutes)
+app.use('/api', contactRoutes )
+app.use('/api/jobs', jobRoutes)
 // test route
 app.get('/', (req, res) => {
     res.send('API is running...');

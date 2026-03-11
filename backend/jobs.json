@@ -1,0 +1,102 @@
+[
+  {
+    "_id": "1",
+    "title": "Frontend Developer",
+    "company": "TechSoft",
+    "location": "Vancouver",
+    "salary": "$70,000",
+    "description": "Build and maintain user interfaces for web applications.",
+    "type": "full-time",
+    "createdAt": "2026-03-10T00:00:00.000Z"
+  },
+  {
+    "_id": "2",
+    "title": "Backend Developer",
+    "company": "CloudNet",
+    "location": "Toronto",
+    "salary": "$80,000",
+    "description": "Develop APIs and server-side logic for scalable applications.",
+    "type": "full-time",
+    "createdAt": "2026-03-10T00:00:00.000Z"
+  },
+  {
+    "_id": "3",
+    "title": "UI Designer",
+    "company": "DesignHub",
+    "location": "Kelowna",
+    "salary": "$65,000",
+    "description": "Design clean and user-friendly interfaces for modern web platforms.",
+    "type": "contract",
+    "createdAt": "2026-03-10T00:00:00.000Z"
+  },
+  {
+    "_id": "4",
+    "title": "Full Stack Developer",
+    "company": "StartupX",
+    "location": "Victoria",
+    "salary": "$85,000",
+    "description": "Work across both frontend and backend systems to deliver full web features.",
+    "type": "full-time",
+    "createdAt": "2026-03-10T00:00:00.000Z"
+  },
+  {
+    "_id": "5",
+    "title": "Software Engineer",
+    "company": "CodeWorks",
+    "location": "Calgary",
+    "salary": "$90,000",
+    "description": "Build software solutions, debug issues, and improve application performance.",
+    "type": "full-time",
+    "createdAt": "2026-03-10T00:00:00.000Z"
+  },
+  {
+    "_id": "6",
+    "title": "DevOps Engineer",
+    "company": "CloudOps",
+    "location": "Remote",
+    "salary": "$95,000",
+    "description": "Maintain deployment pipelines, cloud infrastructure, and system reliability.",
+    "type": "full-time",
+    "createdAt": "2026-03-10T00:00:00.000Z"
+  },
+  {
+    "_id": "7",
+    "title": "QA Tester",
+    "company": "BugTrack",
+    "location": "Edmonton",
+    "salary": "$60,000",
+    "description": "Test software features, report bugs, and verify fixes before release.",
+    "type": "part-time",
+    "createdAt": "2026-03-10T00:00:00.000Z"
+  },
+  {
+    "_id": "8",
+    "title": "Product Manager",
+    "company": "Innovate Inc",
+    "location": "Seattle",
+    "salary": "$100,000",
+    "description": "Coordinate teams, define product goals, and guide features from idea to launch.",
+    "type": "full-time",
+    "createdAt": "2026-03-10T00:00:00.000Z"
+  },
+  {
+    "_id": "9",
+    "title": "Data Analyst",
+    "company": "Insight Labs",
+    "location": "Burnaby",
+    "salary": "$72,000",
+    "description": "Analyze business data, create reports, and support decision-making with insights.",
+    "type": "contract",
+    "createdAt": "2026-03-10T00:00:00.000Z"
+  },
+  {
+    "_id": "10",
+    "title": "Mobile App Developer",
+    "company": "AppForge",
+    "location": "Surrey",
+    "salary": "$88,000",
+    "description": "Develop and maintain mobile applications for Android and iOS platforms.",
+    "type": "internship",
+    "createdAt": "2026-03-10T00:00:00.000Z"
+  }
+]

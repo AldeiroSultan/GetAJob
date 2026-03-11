@@ -2,6 +2,14 @@ import { Link } from 'react-router-dom'
 import '../styles/JobCard.css'
 
 function JobCard({ job }) {
+    const id = job._id || job.id
+    const type = job.type || 'job'
+    const salary = job.salary || 'Not listed'
+    const description = job.description || 'No description available.'
+    const createdAt = job.createdAt
+        ? new Date(job.createdAt).toLocaleDateString()
+        : 'N/A'
+
     return (
         <div className="job-card">
             <div className="job-card-header">

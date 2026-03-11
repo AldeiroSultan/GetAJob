@@ -12,23 +12,32 @@ function JobsPage() {
     const fetchJobs = async () => {
         setLoading(true)
         try {
-            let url = '/api/jobs?'
-            if (search) url += `search=${search}&`
-            if (type) url += `type=${type}&`
-            if (location) url += `location=${location}&`
+       const query = new URLSearchParams()
 
-            const res = await fetch(url)
-            const data = await res.json()
-            setJobs(data)
-        } catch (err) {
-            console.log(err)
+        if (search) query.append('term', search)
+        if (type) query.append('type', type)
+        if (location) query.append('location', location)
+
+        const res = await fetch(`/api/jobs/search?${query.toString()}`)
+        const data = await res.json()
+
+        if (!res.ok) {
+            setJobs([])
+            setLoading(false)
+            return
         }
+
+        setJobs(Array.isArray(data) ? data : [])
+    } catch (err) {
+        console.log(err)
+        setJobs([])
+    }
         setLoading(false)
     }
 
     useEffect(() => {
         fetchJobs()
-    }, [])
+    }, [search, type, location] )
 
     const handleSearch = (e) => {
         e.preventDefault()
@@ -39,7 +48,6 @@ function JobsPage() {
         setSearch('')
         setType('')
         setLocation('')
-        setTimeout(() => fetchJobs(), 100)
     }
 
     return (
@@ -87,7 +95,7 @@ function JobsPage() {
                         <p className="jobs-count">{jobs.length} job(s) found</p>
                         <div className="jobs-grid">
                             {jobs.map((job) => (
-                                <JobCard key={job._id} job={job} />
+                                <JobCard key={job._id|| job.id} job={job} />
                             ))}
                         </div>
                     </>

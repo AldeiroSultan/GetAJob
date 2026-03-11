@@ -15,6 +15,7 @@ import ManageUsers from './pages/admin/ManageUsers'
 import ManageJobs from './pages/admin/ManageJobs'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
 function App() {
@@ -27,15 +28,15 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/jobs/:id" element={<JobDetailsPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/profile" element={<ProtectedRoute> <ProfilePage /> </ProtectedRoute>}/>
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/discussion/:jobId" element={<DiscussionPage />} />
-        <Route path="/employer/dashboard" element={<EmployerDashboard />} />
-        <Route path="/employer/post-job" element={<PostJobPage />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/users" element={<ManageUsers />} />
-        <Route path="/admin/jobs" element={<ManageJobs />} />
+        <Route path="/employer/dashboard" element={<ProtectedRoute role="employer"> <EmployerDashboard /> </ProtectedRoute> }/>
+        <Route path="/employer/post-job" element={<ProtectedRoute role="employer"> <PostJobPage /> </ProtectedRoute>}/>
+        <Route path="/admin/dashboard" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>}/>
+        <Route path="/admin/users" element={<ProtectedRoute role="admin"><ManageUsers /></ProtectedRoute>}/>
+        <Route path="/admin/jobs" element={ <ProtectedRoute role="admin"><ManageJobs /></ProtectedRoute>}/>
       </Routes>
       <Footer />
     </Router>

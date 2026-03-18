@@ -9,16 +9,15 @@ function JobsPage() {
     const [type, setType] = useState('')
     const [location, setLocation] = useState('')
 
-    const fetchJobs = async () => {
-        setLoading(true)
-        try {
-       const query = new URLSearchParams()
+const fetchJobs = async () => {
+    setLoading(true)
+    try {
+        let url = '/api/jobs?'
+        if (search) url += `search=${search}&`
+        if (type) url += `type=${type}&`
+        if (location) url += `location=${location}&`
 
-        if (search) query.append('term', search)
-        if (type) query.append('type', type)
-        if (location) query.append('location', location)
-
-        const res = await fetch(`/api/jobs/search?${query.toString()}`)
+        const res = await fetch(url)
         const data = await res.json()
 
         if (!res.ok) {
@@ -32,8 +31,8 @@ function JobsPage() {
         console.log(err)
         setJobs([])
     }
-        setLoading(false)
-    }
+    setLoading(false)
+}
 
     useEffect(() => {
         fetchJobs()

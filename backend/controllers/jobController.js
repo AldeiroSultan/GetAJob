@@ -1,4 +1,26 @@
 const Job = require('../models/Job');
+const jobs = require('../jobs.json')
+
+const searchJobsFromJson = (req, res) => {
+  const { term = '', type = '', location = '' } = req.query
+
+  const results = jobs.filter((job) => {
+    const matchesTerm =
+      job.title.toLowerCase().includes(term.toLowerCase()) ||
+      job.company.toLowerCase().includes(term.toLowerCase()) ||
+      job.description.toLowerCase().includes(term.toLowerCase())
+
+    const matchesType =
+      !type || job.type.toLowerCase() === type.toLowerCase()
+
+    const matchesLocation =
+      !location || job.location.toLowerCase().includes(location.toLowerCase())
+
+    return matchesTerm && matchesType && matchesLocation
+  })
+
+  res.json(results)
+}
 
 // @desc Get all jobs (with optional search/filter)
 const getJobs = async (req, res) => {
@@ -124,4 +146,4 @@ const getMyJobs = async (req, res) => {
     }
 };
 
-module.exports = { getJobs, getJobById, createJob, updateJob, deleteJob, getMyJobs };
+module.exports = { getJobs, getJobById, createJob, updateJob, deleteJob, getMyJobs, searchJobsFromJson };

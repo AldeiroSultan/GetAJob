@@ -18,7 +18,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
 app.use('/api/applications', require('./routes/applicationRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/discussion/:jobId/comments', require('./routes/discussionRoutes'));
+app.use('/api', require('./routes/contactRoutes'));
 
 // test route
 app.get('/', (req, res) => {

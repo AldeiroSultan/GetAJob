@@ -81,4 +81,16 @@ const getStats = async (req, res) => {
     }
 };
 
-module.exports = { getAllUsers, toggleUserStatus, deleteUser, getAllJobs, getStats };
+// @desc Get public stats for homepage
+const getPublicStats = async (req, res) => {
+    try {
+        const totalJobs = await Job.countDocuments({ isActive: true });
+        const totalUsers = await User.countDocuments();
+        const employers = await User.countDocuments({ role: 'employer' });
+        res.json({ totalJobs, totalUsers, employers });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { getAllUsers, toggleUserStatus, deleteUser, getAllJobs, getStats, getPublicStats };

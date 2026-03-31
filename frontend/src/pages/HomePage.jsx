@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import '../styles/HomePage.css'
@@ -8,6 +8,20 @@ function HomePage() {
     const navigate = useNavigate()
     const [search, setSearch] = useState('')
     const [location, setLocation] = useState('')
+    const [stats, setStats] = useState({ totalJobs: 0, totalUsers: 0, employers: 0 })
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const res = await fetch('/api/admin/public-stats')
+                const data = await res.json()
+                if (res.ok) setStats(data)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        fetchStats()
+    }, [])
 
     const handleSearch = (e) => {
         e.preventDefault()
@@ -58,15 +72,15 @@ function HomePage() {
 
                     <div className="hero-stats">
                         <div className="hero-stat">
-                            <span className="hero-stat-number">500+</span>
+                            <span className="hero-stat-number">{stats.totalJobs}</span>
                             <span className="hero-stat-label">Active Jobs</span>
                         </div>
                         <div className="hero-stat">
-                            <span className="hero-stat-number">200+</span>
-                            <span className="hero-stat-label">Companies</span>
+                            <span className="hero-stat-number">{stats.employers}</span>
+                            <span className="hero-stat-label">Employers</span>
                         </div>
                         <div className="hero-stat">
-                            <span className="hero-stat-number">1k+</span>
+                            <span className="hero-stat-number">{stats.totalUsers}</span>
                             <span className="hero-stat-label">Job Seekers</span>
                         </div>
                     </div>

@@ -1,37 +1,98 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import '../styles/HomePage.css'
 
 function HomePage() {
     const { user } = useAuth()
+    const navigate = useNavigate()
+    const [search, setSearch] = useState('')
+    const [location, setLocation] = useState('')
+
+    const handleSearch = (e) => {
+        e.preventDefault()
+        let url = '/jobs?'
+        if (search.trim()) url += `search=${encodeURIComponent(search.trim())}&`
+        if (location.trim()) url += `location=${encodeURIComponent(location.trim())}`
+        navigate(url)
+    }
 
     return (
         <div className="home">
             <section className="hero">
                 <div className="hero-content">
-                    <h1>Find Your Next Job</h1>
-                    <p>Browse hundreds of job listings and apply with ease.</p>
-                    <div className="hero-buttons">
-                        <Link to="/jobs" className="btn-primary">Browse Jobs</Link>
-                        {!user && (
-                            <Link to="/register" className="btn-secondary">Get Started</Link>
-                        )}
+                    <h1>
+                        Find Your Next{' '}
+                        <span className="hero-highlight">Career Move</span>{' '}
+                        With Confidence
+                    </h1>
+                    <p>
+                        Discover opportunities and connect with employers.
+                        Your dream job is one search away.
+                    </p>
+
+                    <form onSubmit={handleSearch} className="hero-search">
+                        <div className="hero-search-input">
+                            <span className="search-icon">🔍</span>
+                            <input
+                                type="text"
+                                placeholder="Job title, keyword, or company"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                        </div>
+                        <div className="hero-search-divider" />
+                        <div className="hero-search-input">
+                            <span className="search-icon">📍</span>
+                            <input
+                                type="text"
+                                placeholder="City, province, or remote"
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                            />
+                        </div>
+                        <button type="submit" className="hero-search-btn">
+                            Search Jobs →
+                        </button>
+                    </form>
+
+                    <div className="hero-stats">
+                        <div className="hero-stat">
+                            <span className="hero-stat-number">500+</span>
+                            <span className="hero-stat-label">Active Jobs</span>
+                        </div>
+                        <div className="hero-stat">
+                            <span className="hero-stat-number">200+</span>
+                            <span className="hero-stat-label">Companies</span>
+                        </div>
+                        <div className="hero-stat">
+                            <span className="hero-stat-number">1k+</span>
+                            <span className="hero-stat-label">Job Seekers</span>
+                        </div>
                     </div>
                 </div>
             </section>
 
             <section className="features">
                 <div className="feature-card">
-                    <h3>🔍 Search Jobs</h3>
+                    <div className="feature-icon">🔍</div>
+                    <h3>Smart Search</h3>
                     <p>Filter by title, location, and job type to find the perfect fit.</p>
                 </div>
                 <div className="feature-card">
-                    <h3>📄 Easy Apply</h3>
-                    <p>Apply to jobs quickly with your profile information.</p>
+                    <div className="feature-icon">📄</div>
+                    <h3>Easy Apply</h3>
+                    <p>Apply to jobs quickly with an optional cover letter.</p>
                 </div>
                 <div className="feature-card">
-                    <h3>💬 Discussions</h3>
+                    <div className="feature-icon">💬</div>
+                    <h3>Discussions</h3>
                     <p>Ask questions and connect with employers directly on job posts.</p>
+                </div>
+                <div className="feature-card">
+                    <div className="feature-icon">📊</div>
+                    <h3>Track Progress</h3>
+                    <p>Monitor all your applications and their status from your profile.</p>
                 </div>
             </section>
 
@@ -39,7 +100,10 @@ function HomePage() {
                 <section className="cta">
                     <h2>Ready to get started?</h2>
                     <p>Create a free account and start applying today.</p>
-                    <Link to="/register" className="btn-primary">Create Account</Link>
+                    <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <Link to="/register" className="btn-primary">Create Account</Link>
+                        <Link to="/jobs" className="btn-secondary">Browse Jobs</Link>
+                    </div>
                 </section>
             )}
         </div>

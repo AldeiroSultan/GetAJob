@@ -44,4 +44,17 @@ const updateUserProfile = async (req, res) => {
     }
 };
 
-module.exports = { getUserProfile, updateUserProfile };
+// @desc Get comments made by logged in user
+const getMyComments = async (req, res) => {
+    try {
+        const Comment = require('../models/Comment');
+        const comments = await Comment.find({ author: req.user._id })
+            .populate('job', 'title company')
+            .sort({ createdAt: -1 });
+        res.json(comments);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { getUserProfile, updateUserProfile, getMyComments };

@@ -5,24 +5,97 @@
 }
 
 .profile-container {
-    max-width: 700px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
-.profile-container h1 {
-    font-size: 28px;
-    color: #1a1a2e;
+/* Header Card */
+.profile-header-card {
+    background: linear-gradient(135deg, #1a1a2e, #0f3460);
+    border-radius: 12px;
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
     margin-bottom: 24px;
+    flex-wrap: wrap;
 }
 
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #4a90e2;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 3px solid rgba(255,255,255,0.3);
+}
+
+.profile-header-info {
+    flex: 1;
+}
+
+.profile-header-info h1 {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.profile-header-info p {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.profile-role-badge {
+    background: rgba(74, 144, 226, 0.3);
+    color: #7ec8f7;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    text-transform: capitalize;
+    font-weight: bold;
+    border: 1px solid rgba(74, 144, 226, 0.4);
+}
+
+.profile-header-stats {
+    display: flex;
+    gap: 24px;
+}
+
+.profile-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #aaa;
+}
+
+/* Tabs */
 .profile-tabs {
     display: flex;
     gap: 8px;
     margin-bottom: 24px;
+    flex-wrap: wrap;
 }
 
 .tab-btn {
-    padding: 10px 24px;
+    padding: 10px 20px;
     border: 2px solid #ddd;
     background: white;
     border-radius: 6px;
@@ -30,6 +103,9 @@
     font-size: 14px;
     color: #666;
     transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .tab-btn:hover {
@@ -43,6 +119,21 @@
     color: white;
 }
 
+.tab-badge {
+    background: rgba(255,255,255,0.3);
+    color: inherit;
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.tab-btn:not(.active) .tab-badge {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+/* Profile Card */
 .profile-card {
     background: white;
     border-radius: 8px;
@@ -53,23 +144,12 @@
 .profile-card h2 {
     font-size: 20px;
     color: #333;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-.profile-info-row {
-    margin-bottom: 20px;
-}
-
-.profile-role-badge {
-    background: #e3f2fd;
-    color: #1565c0;
-    padding: 4px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    text-transform: capitalize;
-    font-weight: bold;
-}
-
+/* Form */
 .form-group {
     margin-bottom: 16px;
 }
@@ -79,6 +159,7 @@
     margin-bottom: 6px;
     color: #555;
     font-size: 14px;
+    font-weight: 500;
 }
 
 .form-group input {
@@ -88,6 +169,7 @@
     border-radius: 5px;
     font-size: 14px;
     box-sizing: border-box;
+    transition: border-color 0.2s;
 }
 
 .form-group input:focus {
@@ -134,6 +216,7 @@
     font-size: 14px;
 }
 
+/* Applications */
 .applications-list {
     display: flex;
     flex-direction: column;
@@ -146,7 +229,8 @@
     align-items: center;
     padding: 16px;
     background: #f9f9f9;
-    border-radius: 6px;
+    border-radius: 8px;
+    border-left: 4px solid #4a90e2;
     gap: 12px;
 }
 
@@ -159,4 +243,51 @@
 .application-item p {
     font-size: 14px;
     color: #666;
+}
+
+/* Comments History */
+.comments-history {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.comment-history-item {
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border-left: 4px solid #4a90e2;
+}
+
+.comment-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 12px;
+}
+
+.comment-job-title {
+    font-weight: bold;
+    color: #1a1a2e;
+    font-size: 14px;
+}
+
+.comment-job-company {
+    color: #666;
+    font-size: 13px;
+    margin-left: 6px;
+}
+
+.comment-history-date {
+    color: #999;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.comment-history-content {
+    color: #444;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 8px;
 }

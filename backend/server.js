@@ -19,6 +19,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
 app.use('/api/applications', require('./routes/applicationRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/discussion/:jobId/comments', require('./routes/discussionRoutes'));
 app.use('/api', require('./routes/contactRoutes'));
 

@@ -1,31 +1,42 @@
 const Job = require('../models/Job');
+const mongoose = require('mongoose');
 const jobs = require('../jobs.json')
 
+const filterJsonJobs = ({ term = '', search = '', type = '', location = '' } = {}) => {
+    const normalizedTerm = (search || term).toLowerCase();
+    const normalizedType = type.toLowerCase();
+    const normalizedLocation = location.toLowerCase();
+
+    return jobs.filter((job) => {
+        const matchesTerm =
+            !normalizedTerm ||
+            job.title.toLowerCase().includes(normalizedTerm) ||
+            job.company.toLowerCase().includes(normalizedTerm) ||
+            job.description.toLowerCase().includes(normalizedTerm);
+
+        const matchesType =
+            !normalizedType || job.type.toLowerCase() === normalizedType;
+
+        const matchesLocation =
+            !normalizedLocation || job.location.toLowerCase().includes(normalizedLocation);
+
+        return matchesTerm && matchesType && matchesLocation;
+    });
+};
+
 const searchJobsFromJson = (req, res) => {
-  const { term = '', type = '', location = '' } = req.query
-
-  const results = jobs.filter((job) => {
-    const matchesTerm =
-      job.title.toLowerCase().includes(term.toLowerCase()) ||
-      job.company.toLowerCase().includes(term.toLowerCase()) ||
-      job.description.toLowerCase().includes(term.toLowerCase())
-
-    const matchesType =
-      !type || job.type.toLowerCase() === type.toLowerCase()
-
-    const matchesLocation =
-      !location || job.location.toLowerCase().includes(location.toLowerCase())
-
-    return matchesTerm && matchesType && matchesLocation
-  })
-
-  res.json(results)
+    res.json(filterJsonJobs(req.query));
 }
 
 // @desc Get all jobs (with optional search/filter)
 const getJobs = async (req, res) => {
     try {
         const { search, type, location } = req.query;
+        const filteredJsonJobs = filterJsonJobs({ search, type, location });
+
+        if (mongoose.connection.readyState !== 1) {
+            return res.json(filteredJsonJobs);
+        }
 
         let query = { isActive: true };
 
@@ -44,11 +55,20 @@ const getJobs = async (req, res) => {
             query.location = { $regex: location, $options: 'i' };
         }
 
-        const jobs = await Job.find(query)
+        const dbJobs = await Job.find(query)
             .populate('postedBy', 'name email')
             .sort({ createdAt: -1 });
 
-        res.json(jobs);
+        if (dbJobs.length > 0) {
+            return res.json(dbJobs);
+        }
+
+        const activeJobCount = await Job.countDocuments({ isActive: true });
+        if (activeJobCount === 0) {
+            return res.json(filteredJsonJobs);
+        }
+
+        res.json([]);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -57,10 +77,24 @@ const getJobs = async (req, res) => {
 // @desc Get single job by ID
 const getJobById = async (req, res) => {
     try {
+        const jsonJob = jobs.find((job) => job._id === req.params.id);
+
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            if (jsonJob) {
+                return res.json(jsonJob);
+            }
+
+            return res.status(404).json({ message: 'Job not found' });
+        }
+
         const job = await Job.findById(req.params.id)
             .populate('postedBy', 'name email');
 
         if (!job) {
+            if (jsonJob) {
+                return res.json(jsonJob);
+            }
+
             return res.status(404).json({ message: 'Job not found' });
         }
 

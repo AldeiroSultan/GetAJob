@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { trimFormValues, validateLoginForm } from '../utils/formValidation'
 import '../styles/Auth.css'
 
 function LoginPage() {
@@ -9,25 +10,38 @@ function LoginPage() {
         password: ''
     })
     const [error, setError] = useState('')
+    const [fieldErrors, setFieldErrors] = useState({})
     const [loading, setLoading] = useState(false)
 
     const { login } = useAuth()
     const navigate = useNavigate()
 
     const handleChange = (e) => {
+        if (fieldErrors[e.target.name]) {
+            setFieldErrors({ ...fieldErrors, [e.target.name]: '' })
+        }
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        const trimmedData = trimFormValues(formData)
+        const validationErrors = validateLoginForm(trimmedData)
+
         setError('')
+        setFieldErrors(validationErrors)
+
+        if (Object.keys(validationErrors).length > 0) {
+            return
+        }
+
         setLoading(true)
 
         try {
             const res = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(trimmedData)
             })
 
             const data = await res.json()
@@ -51,7 +65,7 @@ function LoginPage() {
             <div className="auth-box">
                 <h2>Welcome Back</h2>
                 {error && <p className="auth-error">{error}</p>}
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} noValidate>
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
                         <input
@@ -61,8 +75,9 @@ function LoginPage() {
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="john@email.com"
-                            required
+                            aria-invalid={Boolean(fieldErrors.email)}
                         />
+                        {fieldErrors.email && <p className="field-error">{fieldErrors.email}</p>}
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
@@ -73,8 +88,9 @@ function LoginPage() {
                             value={formData.password}
                             onChange={handleChange}
                             placeholder="••••••••"
-                            required
+                            aria-invalid={Boolean(fieldErrors.password)}
                         />
+                        {fieldErrors.password && <p className="field-error">{fieldErrors.password}</p>}
                     </div>
                     <button type="submit" className="auth-btn" disabled={loading}>
                         {loading ? 'Logging in...' : 'Login'}

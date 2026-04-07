@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { trimFormValues, validateJobForm } from '../../utils/formValidation'
 
 function PostJobPage() {
     const { user } = useAuth()
@@ -15,15 +16,28 @@ function PostJobPage() {
         salary: '',
     })
     const [error, setError] = useState('')
+    const [fieldErrors, setFieldErrors] = useState({})
     const [loading, setLoading] = useState(false)
 
     const handleChange = (e) => {
+        if (fieldErrors[e.target.name]) {
+            setFieldErrors({ ...fieldErrors, [e.target.name]: '' })
+        }
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        const trimmedData = trimFormValues(formData)
+        const validationErrors = validateJobForm(trimmedData)
+
         setError('')
+        setFieldErrors(validationErrors)
+
+        if (Object.keys(validationErrors).length > 0) {
+            return
+        }
+
         setLoading(true)
 
         try {
@@ -33,7 +47,7 @@ function PostJobPage() {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${user.token}`,
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(trimmedData),
             })
 
             const data = await res.json()
@@ -50,6 +64,15 @@ function PostJobPage() {
             setLoading(false)
         }
     }
+
+    const fieldStyle = (fieldName) => ({
+        width: '100%',
+        padding: '10px 12px',
+        border: fieldErrors[fieldName] ? '1px solid #d32f2f' : '1px solid #ddd',
+        borderRadius: '5px',
+        fontSize: '14px',
+        boxSizing: 'border-box'
+    })
 
     return (
         <div style={{ maxWidth: '700px', margin: '40px auto', padding: '0 24px' }}>
@@ -71,7 +94,7 @@ function PostJobPage() {
             )}
 
             <div style={{ background: 'white', borderRadius: '8px', padding: '40px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} noValidate>
                     <div style={{ marginBottom: '20px' }}>
                         <label style={{ display: 'block', marginBottom: '6px', color: '#555', fontSize: '14px' }}>
                             Job Title *
@@ -82,9 +105,10 @@ function PostJobPage() {
                             value={formData.title}
                             onChange={handleChange}
                             placeholder="e.g. Frontend Developer"
-                            required
-                            style={{ width: '100%', padding: '10px 12px', border: '1px solid #ddd', borderRadius: '5px', fontSize: '14px', boxSizing: 'border-box' }}
+                            aria-invalid={Boolean(fieldErrors.title)}
+                            style={fieldStyle('title')}
                         />
+                        {fieldErrors.title && <p style={{ color: '#d32f2f', fontSize: '13px', margin: '6px 0 0' }}>{fieldErrors.title}</p>}
                     </div>
 
                     <div style={{ marginBottom: '20px' }}>
@@ -97,9 +121,10 @@ function PostJobPage() {
                             value={formData.company}
                             onChange={handleChange}
                             placeholder="e.g. Acme Corp"
-                            required
-                            style={{ width: '100%', padding: '10px 12px', border: '1px solid #ddd', borderRadius: '5px', fontSize: '14px', boxSizing: 'border-box' }}
+                            aria-invalid={Boolean(fieldErrors.company)}
+                            style={fieldStyle('company')}
                         />
+                        {fieldErrors.company && <p style={{ color: '#d32f2f', fontSize: '13px', margin: '6px 0 0' }}>{fieldErrors.company}</p>}
                     </div>
 
                     <div style={{ marginBottom: '20px' }}>
@@ -112,9 +137,10 @@ function PostJobPage() {
                             value={formData.location}
                             onChange={handleChange}
                             placeholder="e.g. Vancouver, BC"
-                            required
-                            style={{ width: '100%', padding: '10px 12px', border: '1px solid #ddd', borderRadius: '5px', fontSize: '14px', boxSizing: 'border-box' }}
+                            aria-invalid={Boolean(fieldErrors.location)}
+                            style={fieldStyle('location')}
                         />
+                        {fieldErrors.location && <p style={{ color: '#d32f2f', fontSize: '13px', margin: '6px 0 0' }}>{fieldErrors.location}</p>}
                     </div>
 
                     <div style={{ marginBottom: '20px' }}>
@@ -127,8 +153,10 @@ function PostJobPage() {
                             value={formData.salary}
                             onChange={handleChange}
                             placeholder="e.g. $60,000 - $80,000/year"
-                            style={{ width: '100%', padding: '10px 12px', border: '1px solid #ddd', borderRadius: '5px', fontSize: '14px', boxSizing: 'border-box' }}
+                            aria-invalid={Boolean(fieldErrors.salary)}
+                            style={fieldStyle('salary')}
                         />
+                        {fieldErrors.salary && <p style={{ color: '#d32f2f', fontSize: '13px', margin: '6px 0 0' }}>{fieldErrors.salary}</p>}
                     </div>
 
                     <div style={{ marginBottom: '20px' }}>
@@ -139,7 +167,7 @@ function PostJobPage() {
                             name="type"
                             value={formData.type}
                             onChange={handleChange}
-                            style={{ width: '100%', padding: '10px 12px', border: '1px solid #ddd', borderRadius: '5px', fontSize: '14px' }}
+                            style={fieldStyle('type')}
                         >
                             <option value="full-time">Full Time</option>
                             <option value="part-time">Part Time</option>
@@ -157,10 +185,11 @@ function PostJobPage() {
                             value={formData.description}
                             onChange={handleChange}
                             placeholder="Describe the role, responsibilities, and what you're looking for..."
-                            required
                             rows={6}
-                            style={{ width: '100%', padding: '10px 12px', border: '1px solid #ddd', borderRadius: '5px', fontSize: '14px', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'inherit' }}
+                            aria-invalid={Boolean(fieldErrors.description)}
+                            style={{ ...fieldStyle('description'), resize: 'vertical', fontFamily: 'inherit' }}
                         />
+                        {fieldErrors.description && <p style={{ color: '#d32f2f', fontSize: '13px', margin: '6px 0 0' }}>{fieldErrors.description}</p>}
                     </div>
 
                     <div style={{ marginBottom: '32px' }}>
@@ -173,8 +202,10 @@ function PostJobPage() {
                             onChange={handleChange}
                             placeholder="List required skills, experience, education..."
                             rows={4}
-                            style={{ width: '100%', padding: '10px 12px', border: '1px solid #ddd', borderRadius: '5px', fontSize: '14px', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'inherit' }}
+                            aria-invalid={Boolean(fieldErrors.requirements)}
+                            style={{ ...fieldStyle('requirements'), resize: 'vertical', fontFamily: 'inherit' }}
                         />
+                        {fieldErrors.requirements && <p style={{ color: '#d32f2f', fontSize: '13px', margin: '6px 0 0' }}>{fieldErrors.requirements}</p>}
                     </div>
 
                     <button

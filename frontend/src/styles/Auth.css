@@ -94,3 +94,9 @@
 .auth-switch a:hover {
     text-decoration: underline;
 }
+
+.field-error {
+    margin-top: 6px;
+    color: #d32f2f;
+    font-size: 13px;
+}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { trimFormValues, validateRegisterForm } from '../utils/formValidation'
 import '../styles/Auth.css'
 
 function RegisterPage() {
@@ -11,25 +12,38 @@ function RegisterPage() {
         role: 'applicant'
     })
     const [error, setError] = useState('')
+    const [fieldErrors, setFieldErrors] = useState({})
     const [loading, setLoading] = useState(false)
 
     const { login } = useAuth()
     const navigate = useNavigate()
 
     const handleChange = (e) => {
+        if (fieldErrors[e.target.name]) {
+            setFieldErrors({ ...fieldErrors, [e.target.name]: '' })
+        }
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        const trimmedData = trimFormValues(formData)
+        const validationErrors = validateRegisterForm(trimmedData)
+
         setError('')
+        setFieldErrors(validationErrors)
+
+        if (Object.keys(validationErrors).length > 0) {
+            return
+        }
+
         setLoading(true)
 
         try {
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(trimmedData)
             })
 
             const data = await res.json()
@@ -53,7 +67,7 @@ function RegisterPage() {
             <div className="auth-box">
                 <h2>Create an Account</h2>
                 {error && <p className="auth-error">{error}</p>}
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} noValidate>
                     <div className="form-group">
                         <label htmlFor="name">Full Name</label>
                         <input
@@ -63,8 +77,9 @@ function RegisterPage() {
                             value={formData.name}
                             onChange={handleChange}
                             placeholder="John Doe"
-                            required
+                            aria-invalid={Boolean(fieldErrors.name)}
                         />
+                        {fieldErrors.name && <p className="field-error">{fieldErrors.name}</p>}
                     </div>
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
@@ -75,8 +90,9 @@ function RegisterPage() {
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="john@email.com"
-                            required
+                            aria-invalid={Boolean(fieldErrors.email)}
                         />
+                        {fieldErrors.email && <p className="field-error">{fieldErrors.email}</p>}
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
@@ -87,8 +103,9 @@ function RegisterPage() {
                             value={formData.password}
                             onChange={handleChange}
                             placeholder="••••••••"
-                            required
+                            aria-invalid={Boolean(fieldErrors.password)}
                         />
+                        {fieldErrors.password && <p className="field-error">{fieldErrors.password}</p>}
                     </div>
                     <div className="form-group">
                         <label htmlFor="role">I am a...</label>

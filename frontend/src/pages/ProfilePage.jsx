@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate, Link } from 'react-router-dom'
+import { trimFormValues, validateProfileForm } from '../utils/formValidation'
 import '../styles/Profile.css'
 
 function ProfilePage() {
@@ -11,6 +12,7 @@ function ProfilePage() {
     const [comments, setComments] = useState([])
     const [message, setMessage] = useState('')
     const [error, setError] = useState('')
+    const [fieldErrors, setFieldErrors] = useState({})
     const [loading, setLoading] = useState(false)
     const [tab, setTab] = useState('profile')
 
@@ -49,14 +51,27 @@ function ProfilePage() {
     }
 
     const handleChange = (e) => {
+        if (fieldErrors[e.target.name]) {
+            setFieldErrors({ ...fieldErrors, [e.target.name]: '' })
+        }
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        const trimmedData = trimFormValues(formData)
+        const validationErrors = validateProfileForm(trimmedData)
+
         setLoading(true)
         setMessage('')
         setError('')
+        setFieldErrors(validationErrors)
+
+        if (Object.keys(validationErrors).length > 0) {
+            setLoading(false)
+            return
+        }
+
         try {
             const res = await fetch('/api/users/profile', {
                 method: 'PUT',
@@ -64,7 +79,7 @@ function ProfilePage() {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${user.token}`,
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(trimmedData),
             })
             const data = await res.json()
             if (!res.ok) {
@@ -156,7 +171,7 @@ function ProfilePage() {
                         <h2>Account Details</h2>
                         {message && <p className="profile-success">{message}</p>}
                         {error && <p className="profile-error">{error}</p>}
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} noValidate>
                             <div className="form-group">
                                 <label>Full Name</label>
                                 <input
@@ -164,8 +179,9 @@ function ProfilePage() {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    required
+                                    aria-invalid={Boolean(fieldErrors.name)}
                                 />
+                                {fieldErrors.name && <p className="field-error">{fieldErrors.name}</p>}
                             </div>
                             <div className="form-group">
                                 <label>Email</label>
@@ -174,8 +190,9 @@ function ProfilePage() {
                                     name="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    required
+                                    aria-invalid={Boolean(fieldErrors.email)}
                                 />
+                                {fieldErrors.email && <p className="field-error">{fieldErrors.email}</p>}
                             </div>
                             <div className="form-group">
                                 <label>New Password (leave blank to keep current)</label>
@@ -185,7 +202,9 @@ function ProfilePage() {
                                     value={formData.password}
                                     onChange={handleChange}
                                     placeholder="••••••••"
+                                    aria-invalid={Boolean(fieldErrors.password)}
                                 />
+                                {fieldErrors.password && <p className="field-error">{fieldErrors.password}</p>}
                             </div>
                             <button type="submit" className="profile-btn" disabled={loading}>
                                 {loading ? 'Saving...' : 'Save Changes'}

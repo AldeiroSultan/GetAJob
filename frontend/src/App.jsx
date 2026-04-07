@@ -22,22 +22,24 @@ function App() {
   return (
     <Router>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/jobs" element={<JobsPage />} />
-        <Route path="/jobs/:id" element={<JobDetailsPage />} />
-        <Route path="/profile" element={<ProtectedRoute> <ProfilePage /> </ProtectedRoute>}/>
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/discussion/:jobId" element={<DiscussionPage />} />
-        <Route path="/employer/dashboard" element={<ProtectedRoute role="employer"> <EmployerDashboard /> </ProtectedRoute> }/>
-        <Route path="/employer/post-job" element={<ProtectedRoute role="employer"> <PostJobPage /> </ProtectedRoute>}/>
-        <Route path="/admin/dashboard" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>}/>
-        <Route path="/admin/users" element={<ProtectedRoute role="admin"><ManageUsers /></ProtectedRoute>}/>
-        <Route path="/admin/jobs" element={ <ProtectedRoute role="admin"><ManageJobs /></ProtectedRoute>}/>
-      </Routes>
+      <main className="app-shell">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/jobs" element={<JobsPage />} />
+          <Route path="/jobs/:id" element={<JobDetailsPage />} />
+          <Route path="/profile" element={<ProtectedRoute> <ProfilePage /> </ProtectedRoute>}/>
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/discussion/:jobId" element={<DiscussionPage />} />
+          <Route path="/employer/dashboard" element={<ProtectedRoute role="employer"> <EmployerDashboard /> </ProtectedRoute> }/>
+          <Route path="/employer/post-job" element={<ProtectedRoute role="employer"> <PostJobPage /> </ProtectedRoute>}/>
+          <Route path="/admin/dashboard" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>}/>
+          <Route path="/admin/users" element={<ProtectedRoute role="admin"><ManageUsers /></ProtectedRoute>}/>
+          <Route path="/admin/jobs" element={ <ProtectedRoute role="admin"><ManageJobs /></ProtectedRoute>}/>
+        </Routes>
+      </main>
       <Footer />
     </Router>
   )

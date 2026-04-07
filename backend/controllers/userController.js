@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const { normalizePayload, validateProfileInput } = require('../utils/validation');
 
 // @desc Get user profile
 const getUserProfile = async (req, res) => {
@@ -17,17 +18,33 @@ const getUserProfile = async (req, res) => {
 // @desc Update user profile
 const updateUserProfile = async (req, res) => {
     try {
+        const updates = normalizePayload(req.body);
+        const validationError = validateProfileInput(updates);
+
+        if (validationError) {
+            return res.status(400).json({ message: validationError });
+        }
+
         const user = await User.findById(req.user._id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.name = req.body.name || user.name;
-        user.email = req.body.email || user.email;
+        const existingUser = await User.findOne({
+            email: updates.email,
+            _id: { $ne: req.user._id },
+        });
 
-        if (req.body.password) {
+        if (existingUser) {
+            return res.status(400).json({ message: 'Email is already in use' });
+        }
+
+        user.name = updates.name;
+        user.email = updates.email;
+
+        if (updates.password) {
             const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(req.body.password, salt);
+            user.password = await bcrypt.hash(updates.password, salt);
         }
 
         const updatedUser = await user.save();

@@ -1,6 +1,7 @@
 const Job = require('../models/Job');
 const mongoose = require('mongoose');
 const jobs = require('../jobs.json')
+const { normalizePayload, validateJobInput } = require('../utils/validation');
 
 const filterJsonJobs = ({ term = '', search = '', type = '', location = '' } = {}) => {
     const normalizedTerm = (search || term).toLowerCase();
@@ -106,10 +107,17 @@ const getJobById = async (req, res) => {
 
 // @desc Create a new job (employer only)
 const createJob = async (req, res) => {
-    const { title, company, location, type, description, requirements, salary } = req.body;
+    const { title, company, location, type, description, requirements, salary } = normalizePayload(req.body);
+    const validationError = validateJobInput({
+        title,
+        company,
+        location,
+        description,
+        requirements,
+    });
 
-    if (!title || !company || !location || !description) {
-        return res.status(400).json({ message: 'Please fill in all required fields' });
+    if (validationError) {
+        return res.status(400).json({ message: validationError });
     }
 
     try {
@@ -143,7 +151,21 @@ const updateJob = async (req, res) => {
             return res.status(403).json({ message: 'Not authorized to update this job' });
         }
 
-        const updatedJob = await Job.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const updates = normalizePayload(req.body);
+        const mergedPayload = {
+            title: updates.title ?? job.title,
+            company: updates.company ?? job.company,
+            location: updates.location ?? job.location,
+            description: updates.description ?? job.description,
+            requirements: updates.requirements ?? job.requirements,
+        };
+        const validationError = validateJobInput(mergedPayload);
+
+        if (validationError) {
+            return res.status(400).json({ message: validationError });
+        }
+
+        const updatedJob = await Job.findByIdAndUpdate(req.params.id, updates, { new: true });
         res.json(updatedJob);
     } catch (error) {
         res.status(500).json({ message: error.message });

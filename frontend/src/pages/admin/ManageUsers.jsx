@@ -83,6 +83,21 @@ function ManageUsers() {
 
                 {message && <p className="admin-message">{message}</p>}
 
+                <div className="admin-summary-row">
+                    <div className="admin-summary-card">
+                        <strong>{users.length}</strong>
+                        <span>Visible users</span>
+                    </div>
+                    <div className="admin-summary-card">
+                        <strong>{users.filter((u) => u.role === 'employer').length}</strong>
+                        <span>Employers in result</span>
+                    </div>
+                    <div className="admin-summary-card">
+                        <strong>{users.filter((u) => u.isDisabled).length}</strong>
+                        <span>Disabled in result</span>
+                    </div>
+                </div>
+
                 <form onSubmit={handleSearch} className="admin-search">
                     <input
                         type="text"

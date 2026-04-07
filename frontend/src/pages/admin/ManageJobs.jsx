@@ -57,6 +57,21 @@ function ManageJobs() {
 
                 {message && <p className="admin-message">{message}</p>}
 
+                <div className="admin-summary-row">
+                    <div className="admin-summary-card">
+                        <strong>{jobs.length}</strong>
+                        <span>Total jobs listed</span>
+                    </div>
+                    <div className="admin-summary-card">
+                        <strong>{jobs.filter((job) => job.location?.toLowerCase().includes('remote')).length}</strong>
+                        <span>Remote listings</span>
+                    </div>
+                    <div className="admin-summary-card">
+                        <strong>{jobs.filter((job) => job.type === 'full-time').length}</strong>
+                        <span>Full-time listings</span>
+                    </div>
+                </div>
+
                 {loading ? (
                     <p>Loading jobs...</p>
                 ) : (

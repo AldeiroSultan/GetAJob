@@ -75,7 +75,56 @@ const getStats = async (req, res) => {
         const totalApplications = await Application.countDocuments();
         const employers = await User.countDocuments({ role: 'employer' });
         const applicants = await User.countDocuments({ role: 'applicant' });
-        res.json({ totalUsers, totalJobs, totalApplications, employers, applicants });
+        const disabledUsers = await User.countDocuments({ isDisabled: true });
+        const activeJobs = await Job.countDocuments({ isActive: true });
+
+        const [
+            pendingApplications,
+            reviewedApplications,
+            acceptedApplications,
+            rejectedApplications,
+            remoteJobs,
+            fullTimeJobs,
+            recentUsers,
+            recentJobs,
+            recentApplications,
+        ] = await Promise.all([
+            Application.countDocuments({ status: 'pending' }),
+            Application.countDocuments({ status: 'reviewed' }),
+            Application.countDocuments({ status: 'accepted' }),
+            Application.countDocuments({ status: 'rejected' }),
+            Job.countDocuments({ location: { $regex: 'remote', $options: 'i' } }),
+            Job.countDocuments({ type: 'full-time' }),
+            User.find({}).sort({ createdAt: -1 }).limit(5).select('name role createdAt'),
+            Job.find({}).sort({ createdAt: -1 }).limit(5).select('title company createdAt'),
+            Application.find({})
+                .sort({ createdAt: -1 })
+                .limit(5)
+                .populate('job', 'title')
+                .populate('applicant', 'name')
+                .select('status createdAt job applicant'),
+        ]);
+
+        res.json({
+            totalUsers,
+            totalJobs,
+            totalApplications,
+            employers,
+            applicants,
+            disabledUsers,
+            activeJobs,
+            remoteJobs,
+            fullTimeJobs,
+            applicationBreakdown: {
+                pending: pendingApplications,
+                reviewed: reviewedApplications,
+                accepted: acceptedApplications,
+                rejected: rejectedApplications,
+            },
+            recentUsers,
+            recentJobs,
+            recentApplications,
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

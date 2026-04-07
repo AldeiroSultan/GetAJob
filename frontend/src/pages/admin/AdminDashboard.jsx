@@ -7,6 +7,7 @@ function AdminDashboard() {
     const { user } = useAuth()
     const navigate = useNavigate()
     const [stats, setStats] = useState(null)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         if (!user || user.role !== 'admin') {
@@ -26,36 +27,158 @@ function AdminDashboard() {
         } catch (err) {
             console.log(err)
         }
+        setLoading(false)
     }
+
+    const statusCards = stats ? [
+        { label: 'Pending Review', value: stats.applicationBreakdown.pending, tone: 'neutral' },
+        { label: 'Reviewed', value: stats.applicationBreakdown.reviewed, tone: 'info' },
+        { label: 'Accepted', value: stats.applicationBreakdown.accepted, tone: 'success' },
+        { label: 'Rejected', value: stats.applicationBreakdown.rejected, tone: 'danger' },
+    ] : []
 
     return (
         <div className="admin-page">
             <div className="admin-container">
                 <h1>Admin Dashboard</h1>
 
-                {stats && (
-                    <div className="stats-grid">
-                        <div className="stat-card">
-                            <h3>{stats.totalUsers}</h3>
-                            <p>Total Users</p>
+                {loading ? (
+                    <p>Loading admin report...</p>
+                ) : stats && (
+                    <>
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <h3>{stats.totalUsers}</h3>
+                                <p>Total Users</p>
+                            </div>
+                            <div className="stat-card">
+                                <h3>{stats.employers}</h3>
+                                <p>Employers</p>
+                            </div>
+                            <div className="stat-card">
+                                <h3>{stats.applicants}</h3>
+                                <p>Job Seekers</p>
+                            </div>
+                            <div className="stat-card">
+                                <h3>{stats.totalJobs}</h3>
+                                <p>Total Jobs</p>
+                            </div>
+                            <div className="stat-card">
+                                <h3>{stats.totalApplications}</h3>
+                                <p>Applications</p>
+                            </div>
+                            <div className="stat-card">
+                                <h3>{stats.disabledUsers}</h3>
+                                <p>Disabled Users</p>
+                            </div>
                         </div>
-                        <div className="stat-card">
-                            <h3>{stats.employers}</h3>
-                            <p>Employers</p>
+
+                        <div className="report-grid">
+                            <div className="report-card">
+                                <div className="report-card-header">
+                                    <h2>Application Pipeline</h2>
+                                    <span>Current status mix</span>
+                                </div>
+                                <div className="status-grid">
+                                    {statusCards.map((card) => (
+                                        <div key={card.label} className={`status-card ${card.tone}`}>
+                                            <strong>{card.value}</strong>
+                                            <span>{card.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="report-card">
+                                <div className="report-card-header">
+                                    <h2>Operational Snapshot</h2>
+                                    <span>High-level usage signals</span>
+                                </div>
+                                <div className="mini-metrics">
+                                    <div className="mini-metric">
+                                        <strong>{stats.activeJobs}</strong>
+                                        <span>Active jobs</span>
+                                    </div>
+                                    <div className="mini-metric">
+                                        <strong>{stats.remoteJobs}</strong>
+                                        <span>Remote jobs</span>
+                                    </div>
+                                    <div className="mini-metric">
+                                        <strong>{stats.fullTimeJobs}</strong>
+                                        <span>Full-time roles</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div className="stat-card">
-                            <h3>{stats.applicants}</h3>
-                            <p>Job Seekers</p>
+
+                        <div className="report-grid">
+                            <div className="report-card">
+                                <div className="report-card-header">
+                                    <h2>Recent Users</h2>
+                                    <span>Latest registrations</span>
+                                </div>
+                                <div className="activity-list">
+                                    {stats.recentUsers.length === 0 ? (
+                                        <p className="report-empty">No recent users.</p>
+                                    ) : (
+                                        stats.recentUsers.map((entry) => (
+                                            <div key={entry._id} className="activity-item">
+                                                <div>
+                                                    <strong>{entry.name}</strong>
+                                                    <p>{entry.role}</p>
+                                                </div>
+                                                <span>{new Date(entry.createdAt).toLocaleDateString()}</span>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="report-card">
+                                <div className="report-card-header">
+                                    <h2>Recent Jobs</h2>
+                                    <span>Latest postings</span>
+                                </div>
+                                <div className="activity-list">
+                                    {stats.recentJobs.length === 0 ? (
+                                        <p className="report-empty">No recent jobs.</p>
+                                    ) : (
+                                        stats.recentJobs.map((entry) => (
+                                            <div key={entry._id} className="activity-item">
+                                                <div>
+                                                    <strong>{entry.title}</strong>
+                                                    <p>{entry.company}</p>
+                                                </div>
+                                                <span>{new Date(entry.createdAt).toLocaleDateString()}</span>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                        <div className="stat-card">
-                            <h3>{stats.totalJobs}</h3>
-                            <p>Total Jobs</p>
+
+                        <div className="report-card">
+                            <div className="report-card-header">
+                                <h2>Recent Applications</h2>
+                                <span>Latest applicant activity</span>
+                            </div>
+                            <div className="activity-list">
+                                {stats.recentApplications.length === 0 ? (
+                                    <p className="report-empty">No recent applications.</p>
+                                ) : (
+                                    stats.recentApplications.map((entry) => (
+                                        <div key={entry._id} className="activity-item">
+                                            <div>
+                                                <strong>{entry.applicant?.name || 'Unknown applicant'}</strong>
+                                                <p>{entry.job?.title || 'Unknown job'} • {entry.status}</p>
+                                            </div>
+                                            <span>{new Date(entry.createdAt).toLocaleDateString()}</span>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
                         </div>
-                        <div className="stat-card">
-                            <h3>{stats.totalApplications}</h3>
-                            <p>Applications</p>
-                        </div>
-                    </div>
+                    </>
                 )}
 
                 <div className="admin-links">

@@ -26,6 +26,15 @@ function Navbar() {
         return 'Explore'
     }, [location.pathname])
 
+    const contextTarget = useMemo(() => {
+        if (location.pathname.startsWith('/admin')) return '/admin/dashboard'
+        if (location.pathname.startsWith('/employer')) return '/employer/dashboard'
+        if (location.pathname.startsWith('/profile')) return '/profile'
+        if (location.pathname.startsWith('/jobs')) return '/jobs'
+        if (location.pathname.startsWith('/discussion')) return '/jobs'
+        return '/jobs'
+    }, [location.pathname])
+
     useEffect(() => {
         setMenuOpen(false)
         setUserMenuOpen(false)
@@ -72,7 +81,9 @@ function Navbar() {
                     </div>
                     <div className="navbar-context">
                         <span className="navbar-context-role">{roleLabel}</span>
-                        <span className="navbar-context-page">{contextLabel}</span>
+                        <Link to={contextTarget} className="navbar-context-page">
+                            {contextLabel}
+                        </Link>
                     </div>
                 </div>
 

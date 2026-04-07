@@ -48,6 +48,12 @@
 .navbar-context-page {
     font-size: 13px;
     color: #c7d2e4;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.navbar-context-page:hover {
+    color: white;
 }
 
 .navbar-links {

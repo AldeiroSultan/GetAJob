@@ -1,6 +1,11 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const {
+    normalizePayload,
+    validateRegisterInput,
+    validateLoginInput,
+} = require('../utils/validation');
 
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -8,10 +13,11 @@ const generateToken = (id) => {
 
 // @desc Register a new user
 const registerUser = async (req, res) => {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role } = normalizePayload(req.body);
+    const validationError = validateRegisterInput({ name, email, password });
 
-    if (!name || !email || !password) {
-        return res.status(400).json({ message: 'Please fill in all fields' });
+    if (validationError) {
+        return res.status(400).json({ message: validationError });
     }
 
     try {
@@ -45,10 +51,11 @@ const registerUser = async (req, res) => {
 
 // @desc Login user
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = normalizePayload(req.body);
+    const validationError = validateLoginInput({ email, password });
 
-    if (!email || !password) {
-        return res.status(400).json({ message: 'Please fill in all fields' });
+    if (validationError) {
+        return res.status(400).json({ message: validationError });
     }
 
     try {

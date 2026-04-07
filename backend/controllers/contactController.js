@@ -1,7 +1,11 @@
+const { normalizePayload, validateContactInput } = require('../utils/validation');
+
 const SubmitContactForm = (req,res) => {
-const {name,email,message} = req.body
-if(!name|| !email || !message) {
-    return res.status(400).json({message: 'All fields are required'})
+const {name,email,message} = normalizePayload(req.body)
+const validationError = validateContactInput({ name, email, message })
+
+if (validationError) {
+    return res.status(400).json({message: validationError})
 }
 
 res.status(200).json({

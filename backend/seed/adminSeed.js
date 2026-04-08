@@ -4,7 +4,7 @@ const dotenv = require('dotenv')
 const dns = require('dns')
 
 dns.setServers(['8.8.8.8', '8.8.4.4'])
-dotenv.config({ path: '../.env' })
+dotenv.config()
 
 const User = require('../models/User')
 

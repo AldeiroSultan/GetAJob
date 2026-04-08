@@ -10,7 +10,7 @@ const normalizePayload = (payload = {}) =>
 const validateRegisterInput = (payload = {}) => {
     const data = normalizePayload(payload);
 
-    if (!data.name || !data.email || !data.password) {
+    if (!data.name || !data.email || !data.password || !data.confirmPassword) {
         return 'All fields are required';
     }
 
@@ -20,6 +20,10 @@ const validateRegisterInput = (payload = {}) => {
 
     if (data.password.length < 6) {
         return 'Password must be at least 6 characters';
+    }
+
+    if (data.password !== data.confirmPassword) {
+        return 'Passwords do not match';
     }
 
     return null;

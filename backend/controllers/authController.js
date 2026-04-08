@@ -13,9 +13,9 @@ const generateToken = (id) => {
 
 // @desc Register a new user
 const registerUser = async (req, res) => {
-    const { name, email, password, role } = req.body
+    const { name, email, password, confirmPassword, role } = normalizePayload(req.body)
 
-    const validationError = validateRegisterInput({ name, email, password })
+    const validationError = validateRegisterInput({ name, email, password, confirmPassword })
     if (validationError) {
         return res.status(400).json({ message: validationError })
     }

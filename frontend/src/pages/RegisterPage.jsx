@@ -100,7 +100,7 @@ function RegisterPage() {
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>Full Name</label>
+                        <label for="name">Full Name</label>
                         <input
                             type="text"
                             name="name"
@@ -112,7 +112,7 @@ function RegisterPage() {
                     </div>
 
                     <div className="form-group">
-                        <label>Email</label>
+                        <label for="email">Email</label>
                         <input
                             type="email"
                             name="email"
@@ -124,10 +124,11 @@ function RegisterPage() {
                     </div>
 
                     <div className="form-group">
-                        <label>Password</label>
+                        <label for="password">Password</label>
                         <input
                             type="password"
                             name="password"
+                            id="password"
                             value={formData.password}
                             onChange={handleChange}
                             placeholder="••••••••"
@@ -149,9 +150,11 @@ function RegisterPage() {
 
                     <div className="form-group">
                         <label>Profile Picture (optional)</label>
+                        <label for="profileImage">Profile Picture (optional)</label>
                         <input
                             type="file"
                             name="profileImage"
+                            id="profileImage"
                             accept="image/jpeg, image/png"
                             onChange={handleImageChange}
                         />
@@ -160,14 +163,14 @@ function RegisterPage() {
                     </div>
 
                     <div className="form-group">
-                        <label>I am a...</label>
-                        <select name="role" value={formData.role} onChange={handleChange}>
+                        <label for="role">I am a...</label>
+                        <select name="role" id="role" value={formData.role} onChange={handleChange}>
                             <option value="applicant">Job Seeker</option>
                             <option value="employer">Employer</option>
                         </select>
                     </div>
 
-                    <button type="submit" className="auth-btn" disabled={loading}>
+                    <button type="submit" className="auth-btn" name="create account" disabled={loading}>
                         {loading ? 'Creating Account...' : 'Create Account'}
                     </button>
                 </form>

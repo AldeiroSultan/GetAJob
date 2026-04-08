@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { Search, MapPin, Briefcase, FileText, MessageSquare, BarChart2 } from 'lucide-react'
 import '../styles/HomePage.css'
 
 function HomePage() {
@@ -47,7 +48,8 @@ function HomePage() {
 
                     <form onSubmit={handleSearch} className="hero-search">
                         <div className="hero-search-input">
-                            <span className="search-icon">🔍</span>
+                            <Search size={16} color="#999" />
+
                             <input
                                 type="text"
                                 placeholder="Job title, keyword, or company"
@@ -57,7 +59,7 @@ function HomePage() {
                         </div>
                         <div className="hero-search-divider" />
                         <div className="hero-search-input">
-                            <span className="search-icon">📍</span>
+                            <MapPin size={16} color="#999" />
                             <input
                                 type="text"
                                 placeholder="City, province, or remote"
@@ -89,22 +91,22 @@ function HomePage() {
 
             <section className="features">
                 <div className="feature-card">
-                    <div className="feature-icon">🔍</div>
+                    <div className="feature-icon"><Search size={24} color="#7c3aed" /></div>
                     <h3>Smart Search</h3>
                     <p>Filter by title, location, and job type to find the perfect fit.</p>
                 </div>
                 <div className="feature-card">
-                    <div className="feature-icon">📄</div>
+                    <div className="feature-icon"><FileText size={28} color="#7c3aed" /></div>
                     <h3>Easy Apply</h3>
                     <p>Apply to jobs quickly with an optional cover letter.</p>
                 </div>
                 <div className="feature-card">
-                    <div className="feature-icon">💬</div>
+                    <div className="feature-icon"><MessageSquare size={28} color="#7c3aed" /></div>
                     <h3>Discussions</h3>
                     <p>Ask questions and connect with employers directly on job posts.</p>
                 </div>
                 <div className="feature-card">
-                    <div className="feature-icon">📊</div>
+                    <div className="feature-icon"><BarChart2 size={28} color="#7c3aed" /></div>
                     <h3>Track Progress</h3>
                     <p>Monitor all your applications and their status from your profile.</p>
                 </div>

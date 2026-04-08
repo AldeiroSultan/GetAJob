@@ -5,10 +5,15 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-      }
+      '/api': 'http://localhost:5000'
     }
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/tests/setup.js'
+  },
+  ssr: {
+    noExternal: ['lucide-react']
   }
 })

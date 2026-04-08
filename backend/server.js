@@ -23,17 +23,24 @@ app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/discussion/:jobId/comments', require('./routes/discussionRoutes'));
 app.use('/api', require('./routes/contactRoutes'));
 
-// test route
-app.get('/', (req, res) => {
-    res.send('API is running...');
-});
+// Serve frontend in production (Docker)
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, 'public')))
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'public', 'index.html'))
+    })
+} else {
+    app.get('/', (req, res) => {
+        res.send('API is running...')
+    })
+}
 
 const PORT = process.env.PORT || 5000;
+
+module.exports = app;
 
 if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
     });
 }
-
-module.exports = app;

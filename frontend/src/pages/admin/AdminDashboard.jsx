@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { Users, Briefcase } from 'lucide-react'
 import '../../styles/Admin.css'
 
 function AdminDashboard() {
@@ -71,6 +72,32 @@ function AdminDashboard() {
                                 <h3>{stats.disabledUsers}</h3>
                                 <p>Disabled Users</p>
                             </div>
+                        </div>
+
+                        {/* Site Overview Bar Chart */}
+                        <div style={{ background: 'white', borderRadius: '8px', padding: '24px', boxShadow: '0 2px 8px rgba(0,0,0,0.07)', marginTop: '24px', marginBottom: '24px' }}>
+                            <h3 style={{ marginBottom: '20px', color: '#1a1a2e', fontSize: '16px', fontWeight: '600' }}>Site Overview</h3>
+                            {[
+                                { label: 'Users', value: stats.totalUsers, color: '#7c3aed' },
+                                { label: 'Jobs', value: stats.totalJobs, color: '#4a90e2' },
+                                { label: 'Applications', value: stats.totalApplications, color: '#2e7d32' },
+                            ].map(({ label, value, color }) => (
+                                <div key={label} style={{ marginBottom: '16px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                        <span style={{ fontSize: '14px', color: '#555' }}>{label}</span>
+                                        <span style={{ fontSize: '14px', fontWeight: 'bold', color }}>{value}</span>
+                                    </div>
+                                    <div style={{ background: '#f0f0f0', borderRadius: '4px', height: '8px', overflow: 'hidden' }}>
+                                        <div style={{
+                                            background: color,
+                                            height: '100%',
+                                            width: `${Math.min((value / Math.max(stats.totalUsers, 1)) * 100, 100)}%`,
+                                            borderRadius: '4px',
+                                            transition: 'width 0.5s ease'
+                                        }} />
+                                    </div>
+                                </div>
+                            ))}
                         </div>
 
                         <div className="report-grid">
@@ -178,19 +205,20 @@ function AdminDashboard() {
                                 )}
                             </div>
                         </div>
+
+                        <div className="admin-links">
+                            <Link to="/admin/users" className="admin-link-card">
+                                <h3 style={{display:'flex', alignItems:'center', gap:'8px'}}><Users size={18} />Manage Users</h3>
+
+                                <p>View, enable, disable, or delete user accounts</p>
+                            </Link>
+                            <Link to="/admin/jobs" className="admin-link-card">
+                                <h3 style={{display:'flex', alignItems:'center', gap:'8px'}}><Briefcase size={18} />Manage Jobs</h3>
+                                <p>View and remove job listings</p>
+                            </Link>
+                        </div>
                     </>
                 )}
-
-                <div className="admin-links">
-                    <Link to="/admin/users" className="admin-link-card">
-                        <h3>👥 Manage Users</h3>
-                        <p>View, enable, disable, or delete user accounts</p>
-                    </Link>
-                    <Link to="/admin/jobs" className="admin-link-card">
-                        <h3>💼 Manage Jobs</h3>
-                        <p>View and remove job listings</p>
-                    </Link>
-                </div>
             </div>
         </div>
     )

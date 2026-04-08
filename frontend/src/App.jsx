@@ -16,12 +16,14 @@ import ManageJobs from './pages/admin/ManageJobs'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
+import Breadcrumb from './components/Breadcrumb'
 import './App.css'
 
 function App() {
   return (
     <Router>
       <Navbar />
+      <Breadcrumb />
       <main className="app-shell">
         <Routes>
           <Route path="/" element={<HomePage />} />

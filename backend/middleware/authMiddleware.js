@@ -1,39 +1,48 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const jwt = require('jsonwebtoken')
+const User = require('../models/User')
 
 const protect = async (req, res, next) => {
-    let token;
-
+    let token
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
-            token = req.headers.authorization.split(' ')[1];
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.user = await User.findById(decoded.id).select('-password');
-            next();
+            token = req.headers.authorization.split(' ')[1]
+            const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+            const user = await User.findById(decoded.id).select('-password')
+
+            if (!user) {
+                return res.status(401).json({ message: 'User not found' })
+            }
+
+            if (user.isDisabled) {
+                return res.status(401).json({ message: 'Your account has been disabled' })
+            }
+
+            req.user = user
+            next()
         } catch (error) {
-            res.status(401).json({ message: 'Not authorized, token failed' });
+            return res.status(401).json({ message: 'Not authorized, token failed' })
         }
     }
-
     if (!token) {
-        res.status(401).json({ message: 'Not authorized, no token' });
+        return res.status(401).json({ message: 'Not authorized, no token' })
     }
-};
+}
 
 const adminOnly = (req, res, next) => {
     if (req.user && req.user.role === 'admin') {
-        next();
+        next()
     } else {
-        res.status(403).json({ message: 'Not authorized as admin' });
+        res.status(403).json({ message: 'Admin access only' })
     }
-};
+}
 
 const employerOnly = (req, res, next) => {
-    if (req.user && (req.user.role === 'employer' || req.user.role === 'admin')) {
-        next();
+    if (req.user && req.user.role === 'employer') {
+        next()
     } else {
-        res.status(403).json({ message: 'Not authorized as employer' });
+        res.status(403).json({ message: 'Employer access only' })
     }
-};
+}
 
-module.exports = { protect, adminOnly, employerOnly };
+module.exports = { protect, adminOnly, employerOnly }

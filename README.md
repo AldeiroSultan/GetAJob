@@ -20,7 +20,7 @@ JWT_SECRET=fakejordanssecretkey123
 
 ---
 
-## How to Run It
+## Running the App - Option 1
 
 You need **two terminals open at the same time** — one for the backend, one for the frontend.
 
@@ -51,6 +51,30 @@ Local: http://localhost:5173/
 Then open your browser and go to **http://localhost:5173**
 
 ---
+
+## Running the App - Option 2\
+
+This application has been optimized to run with a simple Docker setup. Ensure you have Docker setup on your computer. To check if Docker is setup properly, run:
+
+```bash
+docker -v
+```
+
+and you should see the current version of Docker installed on your computer.
+
+When running the application for the first time, run the following command:
+
+```bash
+docker compose up --build
+```
+
+**OR** if you have the project already built you can run the following command:
+
+```bash
+docker compose up -d
+```
+
+Once the application is built, simply visit **http://localhost:4000** to access the application.
 
 ## Testing the App
 

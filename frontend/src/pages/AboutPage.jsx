@@ -41,14 +41,7 @@ function AboutPage() {
                     <strong>Guests</strong> — Browse all job listings and read discussions without an account.
                     Sign up when you're ready to apply.
                 </p>
-
-                <h2 style={{ fontSize: '22px', color: '#1a1a2e', marginBottom: '12px', marginTop: '32px' }}>
-                    Team 23
-                </h2>
-                <p style={{ color: '#555', lineHeight: '1.8', fontSize: '15px', marginBottom: '32px' }}>
-                    Built with React, Node.js, Express, and MongoDB Atlas for COSC 360 at the
-                    University of British Columbia, 2025/2026.
-                </p>
+            
 
                 <div style={{ display: 'flex', gap: '16px' }}>
                     <Link

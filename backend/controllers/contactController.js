@@ -1,15 +1,14 @@
-const { normalizePayload, validateContactInput } = require('../utils/validation');
+const contactService = require('../services/contactService');
 
-const SubmitContactForm = (req,res) => {
-const {name,email,message} = normalizePayload(req.body)
-const validationError = validateContactInput({ name, email, message })
+// Contact controller - handles HTTP request/response coordination
 
-if (validationError) {
-    return res.status(400).json({message: validationError})
-}
+const SubmitContactForm = (req, res) => {
+    try {
+        const message = contactService.submitContactForm(req.body);
+        res.status(200).json({ message });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
 
-res.status(200).json({
-    message: `Thanks ${name} your message has been recieved `
-})
-}
-module.exports = {SubmitContactForm}
+module.exports = { SubmitContactForm };

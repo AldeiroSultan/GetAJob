@@ -13,8 +13,14 @@ describe('Validation Utils', () => {
 
     test('register validation rejects invalid email', () => {
         expect(
-            validateRegisterInput({ name: 'John', email: 'bad-email', password: 'password123' })
+            validateRegisterInput({ name: 'John', email: 'bad-email', password: 'password123', confirmPassword: 'password123' })
         ).toBe('Invalid email address');
+    });
+
+    test('register validation rejects mismatched confirmation', () => {
+        expect(
+            validateRegisterInput({ name: 'John', email: 'john@test.com', password: 'password123', confirmPassword: 'password321' })
+        ).toBe('Passwords do not match');
     });
 
     test('profile validation allows blank password but requires valid email', () => {

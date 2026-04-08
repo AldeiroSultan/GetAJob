@@ -11,6 +11,7 @@ function RegisterPage() {
         name: '',
         email: '',
         password: '',
+        confirmPassword: '',
         role: 'applicant',
     })
     const [profileImage, setProfileImage] = useState(null)
@@ -62,6 +63,7 @@ function RegisterPage() {
             data.append('name', trimmed.name)
             data.append('email', trimmed.email)
             data.append('password', trimmed.password)
+            data.append('confirmPassword', trimmed.confirmPassword)
             data.append('role', trimmed.role)
             if (profileImage) {
                 data.append('profileImage', profileImage)
@@ -131,6 +133,18 @@ function RegisterPage() {
                             placeholder="••••••••"
                         />
                         {fieldErrors.password && <span className="field-error">{fieldErrors.password}</span>}
+                    </div>
+
+                    <div className="form-group">
+                        <label>Confirm Password</label>
+                        <input
+                            type="password"
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            placeholder="••••••••"
+                        />
+                        {fieldErrors.confirmPassword && <span className="field-error">{fieldErrors.confirmPassword}</span>}
                     </div>
 
                     <div className="form-group">

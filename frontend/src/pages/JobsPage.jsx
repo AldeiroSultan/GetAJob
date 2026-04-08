@@ -1,13 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import JobCard from '../components/JobCard'
 import '../styles/JobsPage.css'
 
 function JobsPage() {
+    const [searchParams, setSearchParams] = useSearchParams()
     const [jobs, setJobs] = useState([])
     const [loading, setLoading] = useState(true)
-    const [search, setSearch] = useState('')
-    const [type, setType] = useState('')
-    const [location, setLocation] = useState('')
+    const [search, setSearch] = useState(() => searchParams.get('search') || '')
+    const [type, setType] = useState(() => searchParams.get('type') || '')
+    const [location, setLocation] = useState(() => searchParams.get('location') || '')
+    const [feedback, setFeedback] = useState('')
     const [savedJobs, setSavedJobs] = useState(() => {
         try {
             return JSON.parse(localStorage.getItem('savedJobs')) || []
@@ -15,6 +18,66 @@ function JobsPage() {
             return []
         }
     })
+    const [recentSearches, setRecentSearches] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem('recentJobSearches')) || []
+        } catch {
+            return []
+        }
+    })
+
+    useEffect(() => {
+        setSearch(searchParams.get('search') || '')
+        setType(searchParams.get('type') || '')
+        setLocation(searchParams.get('location') || '')
+    }, [searchParams])
+
+    useEffect(() => {
+        if (!feedback) return
+
+        const timer = setTimeout(() => setFeedback(''), 2500)
+        return () => clearTimeout(timer)
+    }, [feedback])
+
+    const updateSearchParams = ({ nextSearch, nextType, nextLocation }) => {
+        const params = new URLSearchParams()
+
+        if (nextSearch) params.set('search', nextSearch)
+        if (nextType) params.set('type', nextType)
+        if (nextLocation) params.set('location', nextLocation)
+
+        setSearchParams(params)
+    }
+
+    const rememberSearch = (nextSearch, nextLocation, nextType) => {
+        const labelParts = [
+            nextSearch && `Search: ${nextSearch}`,
+            nextLocation && `Location: ${nextLocation}`,
+            nextType && `Type: ${nextType}`,
+        ].filter(Boolean)
+
+        if (labelParts.length === 0) return
+
+        const entry = {
+            label: labelParts.join(' • '),
+            search: nextSearch,
+            location: nextLocation,
+            type: nextType,
+        }
+
+        const updated = [
+            entry,
+            ...recentSearches.filter(
+                (item) =>
+                    item.search !== entry.search ||
+                    item.location !== entry.location ||
+                    item.type !== entry.type
+            ),
+        ].slice(0, 5)
+
+        setRecentSearches(updated)
+        localStorage.setItem('recentJobSearches', JSON.stringify(updated))
+    }
 
     const fetchJobs = async () => {
         setLoading(true)
@@ -36,18 +99,23 @@ function JobsPage() {
 
     useEffect(() => {
         fetchJobs()
-    }, [])
+    }, [search, type, location])
 
     const handleSearch = (e) => {
         e.preventDefault()
-        fetchJobs()
+        const nextSearch = search.trim()
+        const nextLocation = location.trim()
+
+        updateSearchParams({ nextSearch, nextType: type, nextLocation })
+        rememberSearch(nextSearch, nextLocation, type)
     }
 
     const handleReset = () => {
         setSearch('')
         setType('')
         setLocation('')
-        setTimeout(() => fetchJobs(), 100)
+        setSearchParams(new URLSearchParams())
+        setFeedback('Search filters cleared.')
     }
 
     const handleSave = (job) => {
@@ -55,14 +123,34 @@ function JobsPage() {
         let updated
         if (exists) {
             updated = savedJobs.filter(j => j._id !== job._id)
+            setFeedback(`Removed ${job.title} from your tracker.`)
         } else {
             updated = [job, ...savedJobs]
+            setFeedback(`Saved ${job.title} to your tracker.`)
         }
         setSavedJobs(updated)
         localStorage.setItem('savedJobs', JSON.stringify(updated))
     }
 
     const isSaved = (jobId) => savedJobs.some(j => j._id === jobId)
+    const hasActiveFilters = Boolean(search || location || type)
+    const activeFilters = [
+        search && `Search: ${search}`,
+        location && `Location: ${location}`,
+        type && `Type: ${type}`,
+    ].filter(Boolean)
+
+    const applyRecentSearch = (entry) => {
+        setSearch(entry.search || '')
+        setLocation(entry.location || '')
+        setType(entry.type || '')
+        updateSearchParams({
+            nextSearch: entry.search || '',
+            nextLocation: entry.location || '',
+            nextType: entry.type || '',
+        })
+        setFeedback(`Applied recent search: ${entry.label}`)
+    }
 
     return (
         <div className="jobs-page">
@@ -102,6 +190,14 @@ function JobsPage() {
             <div className="jobs-body">
                 {/* Main job list */}
                 <div className="jobs-main">
+                    {feedback && <p className="jobs-feedback">{feedback}</p>}
+                    {hasActiveFilters && (
+                        <div className="active-filters">
+                            {activeFilters.map((filter) => (
+                                <span key={filter} className="filter-chip">{filter}</span>
+                            ))}
+                        </div>
+                    )}
                     {loading ? (
                         <p className="jobs-status">Loading jobs...</p>
                     ) : jobs.length === 0 ? (
@@ -131,6 +227,9 @@ function JobsPage() {
                             <h3>Job Tracker</h3>
                         </div>
                         <p className="sidebar-subtitle">Jobs you've saved</p>
+                        <p className="tracker-summary">
+                            {savedJobs.length} saved job{savedJobs.length === 1 ? '' : 's'}
+                        </p>
 
                         {savedJobs.length === 0 ? (
                             <div className="sidebar-empty">
@@ -156,6 +255,33 @@ function JobsPage() {
                                             ×
                                         </button>
                                     </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="sidebar-card">
+                        <div className="sidebar-card-header">
+                            <span>🧭</span>
+                            <h3>Recent Searches</h3>
+                        </div>
+                        <p className="sidebar-subtitle">Jump back into earlier filters</p>
+
+                        {recentSearches.length === 0 ? (
+                            <div className="sidebar-empty">
+                                <p>Your recent searches will appear here.</p>
+                            </div>
+                        ) : (
+                            <div className="recent-search-list">
+                                {recentSearches.map((entry) => (
+                                    <button
+                                        key={`${entry.label}-${entry.search}-${entry.location}-${entry.type}`}
+                                        type="button"
+                                        className="recent-search-item"
+                                        onClick={() => applyRecentSearch(entry)}
+                                    >
+                                        {entry.label}
+                                    </button>
                                 ))}
                             </div>
                         )}

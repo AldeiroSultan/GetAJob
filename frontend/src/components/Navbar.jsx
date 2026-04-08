@@ -129,9 +129,22 @@ function Navbar() {
                                     aria-expanded={userMenuOpen}
                                     aria-label="Toggle user menu"
                                 >
-                                    <span className="user-menu-avatar">
-                                        {user.name?.charAt(0).toUpperCase() || 'U'}
-                                    </span>
+                                    <div className="user-menu-avatar">
+                                        {user?.profileImage ? (
+                                            <img
+                                                src={user.profileImage}
+                                                alt="Profile"
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover',
+                                                    display: 'block'
+                                                }}
+                                            />
+                                        ) : (
+                                            user?.name?.charAt(0).toUpperCase()
+                                        )}
+                                    </div>
                                     <span className="user-menu-text">
                                         <strong>{user.name}</strong>
                                         <small>{roleLabel}</small>

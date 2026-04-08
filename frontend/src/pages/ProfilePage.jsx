@@ -114,7 +114,15 @@ function ProfilePage() {
                 {/* Profile Header */}
                 <div className="profile-header-card">
                     <div className="profile-avatar">
-                        {getInitials(user?.name)}
+                        {user?.profileImage ? (
+                            <img
+                                src={user.profileImage}
+                                alt="Profile"
+                                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                            />
+                        ) : (
+                            getInitials(user?.name)
+                        )}
                     </div>
                     <div className="profile-header-info">
                         <h1>{user?.name}</h1>

@@ -20,7 +20,7 @@ const renderRegister = () => render(
 describe('Register Page', () => {
     test('renders the create account heading', () => {
         renderRegister()
-        expect(screen.getByText('Create Account')).toBeInTheDocument()
+        expect(screen.getByRole('heading', {name: 'Create Account'})).toBeInTheDocument()
     })
 
     test('renders full name input', () => {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import JobCard from '../components/JobCard'
 import '../styles/JobsPage.css'
-
+import { Bookmark, Lightbulb, History } from 'lucide-react'
 function JobsPage() {
     const [searchParams, setSearchParams] = useSearchParams()
     const [jobs, setJobs] = useState([])
@@ -223,7 +223,7 @@ function JobsPage() {
                 <div className="jobs-sidebar">
                     <div className="sidebar-card">
                         <div className="sidebar-card-header">
-                            <span>🔖</span>
+                            <Bookmark size={18} color="#7c3aed" />
                             <h3>Job Tracker</h3>
                         </div>
                         <p className="sidebar-subtitle">Jobs you've saved</p>
@@ -262,7 +262,7 @@ function JobsPage() {
 
                     <div className="sidebar-card">
                         <div className="sidebar-card-header">
-                            <span>🧭</span>
+                            <History size={18} color="#7c3aed" />
                             <h3>Recent Searches</h3>
                         </div>
                         <p className="sidebar-subtitle">Jump back into earlier filters</p>
@@ -289,7 +289,7 @@ function JobsPage() {
 
                     <div className="sidebar-card">
                         <div className="sidebar-card-header">
-                            <span>💡</span>
+                            <Lightbulb size={18} color="#7c3aed" />
                             <h3>Quick Tips</h3>
                         </div>
                         <ul className="tips-list">

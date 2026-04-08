@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { Users, Briefcase } from 'lucide-react'
 import '../../styles/Admin.css'
 
 function AdminDashboard() {
@@ -207,11 +208,12 @@ function AdminDashboard() {
 
                         <div className="admin-links">
                             <Link to="/admin/users" className="admin-link-card">
-                                <h3>👥 Manage Users</h3>
+                                <h3 style={{display:'flex', alignItems:'center', gap:'8px'}}><Users size={18} />Manage Users</h3>
+
                                 <p>View, enable, disable, or delete user accounts</p>
                             </Link>
                             <Link to="/admin/jobs" className="admin-link-card">
-                                <h3>💼 Manage Jobs</h3>
+                                <h3 style={{display:'flex', alignItems:'center', gap:'8px'}}><Briefcase size={18} />Manage Jobs</h3>
                                 <p>View and remove job listings</p>
                             </Link>
                         </div>

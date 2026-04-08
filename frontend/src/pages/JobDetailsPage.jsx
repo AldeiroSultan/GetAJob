@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { MapPin, DollarSign, CheckCircle } from 'lucide-react'
 
 function JobDetailsPage() {
     const { id } = useParams()
@@ -81,8 +82,8 @@ function JobDetailsPage() {
                 </div>
 
                 <p style={{ color: '#4a90e2', fontWeight: 'bold', fontSize: '18px', marginBottom: '8px' }}>{job.company}</p>
-                <p style={{ color: '#666', marginBottom: '4px' }}>📍 {job.location}</p>
-                <p style={{ color: '#666', marginBottom: '24px' }}>💰 {job.salary}</p>
+                <p style={{ color: '#666', marginBottom: '4px' }}><MapPin size={16} color="#999" /> {job.location}</p>
+                <p style={{ color: '#666', marginBottom: '24px' }}><DollarSign size={16} color="#999" /> {job.salary}</p>
 
                 <hr style={{ borderColor: '#eee', marginBottom: '24px' }} />
 
@@ -104,7 +105,8 @@ function JobDetailsPage() {
 
                 {applied && (
                     <p style={{ background: '#e8f5e9', color: '#2e7d32', padding: '12px', borderRadius: '6px', marginBottom: '16px' }}>
-                        ✅ Application submitted successfully!
+                        <CheckCircle size={16} color="#2e7d32" style={{ marginRight: '8px' }} />
+                        Application submitted successfully!
                     </p>
                 )}
 

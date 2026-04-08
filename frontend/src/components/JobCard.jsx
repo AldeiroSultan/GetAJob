@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { MapPin, DollarSign, Bookmark, BookmarkCheck } from 'lucide-react'
 import '../styles/JobCard.css'
 
 function JobCard({ job, onSave, isSaved }) {
@@ -17,14 +18,14 @@ function JobCard({ job, onSave, isSaved }) {
                     className={`save-btn ${isSaved ? 'saved' : ''}`}
                     title={isSaved ? 'Unsave job' : 'Save job'}
                 >
-                    {isSaved ? '🔖' : '🔖'}
+                    {isSaved ? <BookmarkCheck size={16} color="#7c3aed" /> : <Bookmark size={16} color="#7c3aed" />}
                     <span>{isSaved ? 'Saved' : 'Save'}</span>
                 </button>
             </div>
 
             <div className="job-card-meta">
-                <span className="job-location">📍 {job.location}</span>
-                <span className="job-salary">💰 {job.salary || 'Not specified'}</span>
+                <span className="job-location"><MapPin size={16} color="#999" /> {job.location}</span>
+                <span className="job-salary"><DollarSign size={16} color="#999" /> {job.salary || 'Not specified'}</span>
                 <span className={`job-type ${job.type}`}>{job.type}</span>
             </div>
 

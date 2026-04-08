@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - MONGO_URI=mongodb://mongo:27017/getajob
+      - JWT_SECRET=fakejordanssecretkey123
+      - NODE_ENV=production
+    depends_on:
+      - mongo
+    volumes:
+      - uploads_data:/app/backend/uploads
+
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
+  uploads_data:

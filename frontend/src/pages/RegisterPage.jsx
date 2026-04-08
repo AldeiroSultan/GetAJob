@@ -1,22 +1,22 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { trimFormValues, validateRegisterForm } from '../utils/formValidation'
+import { validateRegisterForm, trimFormValues } from '../utils/formValidation'
 import '../styles/Auth.css'
 
 function RegisterPage() {
+    const { login } = useAuth()
+    const navigate = useNavigate()
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
-        role: 'applicant'
+        role: 'applicant',
     })
-    const [error, setError] = useState('')
+    const [profileImage, setProfileImage] = useState(null)
     const [fieldErrors, setFieldErrors] = useState({})
+    const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
-
-    const { login } = useAuth()
-    const navigate = useNavigate()
 
     const handleChange = (e) => {
         if (fieldErrors[e.target.name]) {
@@ -25,104 +25,139 @@ function RegisterPage() {
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0]
+        if (file) {
+            if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                setFieldErrors({ ...fieldErrors, profileImage: 'Only JPG and PNG files are allowed' })
+                setProfileImage(null)
+                return
+            }
+            if (file.size > 2 * 1024 * 1024) {
+                setFieldErrors({ ...fieldErrors, profileImage: 'Image must be under 2MB' })
+                setProfileImage(null)
+                return
+            }
+            setFieldErrors({ ...fieldErrors, profileImage: '' })
+            setProfileImage(file)
+        }
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
-        const trimmedData = trimFormValues(formData)
-        const validationErrors = validateRegisterForm(trimmedData)
+        const trimmed = trimFormValues(formData)
+        const errors = validateRegisterForm(trimmed)
 
-        setError('')
-        setFieldErrors(validationErrors)
-
-        if (Object.keys(validationErrors).length > 0) {
+        if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors)
             return
         }
 
         setLoading(true)
+        setError('')
 
         try {
+            // use FormData so we can send the image file
+            const data = new FormData()
+            data.append('name', trimmed.name)
+            data.append('email', trimmed.email)
+            data.append('password', trimmed.password)
+            data.append('role', trimmed.role)
+            if (profileImage) {
+                data.append('profileImage', profileImage)
+            }
+
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(trimmedData)
+                body: data, // no Content-Type header — browser sets it with boundary automatically
             })
 
-            const data = await res.json()
+            const result = await res.json()
 
             if (!res.ok) {
-                setError(data.message)
+                setError(result.message || 'Registration failed')
                 setLoading(false)
                 return
             }
 
-            login(data)
+            login(result)
             navigate('/')
         } catch (err) {
-            setError('Something went wrong, please try again')
-            setLoading(false)
+            setError('Something went wrong. Please try again.')
         }
+        setLoading(false)
     }
 
     return (
-        <div className="auth-container">
-            <div className="auth-box">
-                <h2>Create an Account</h2>
+        <div className="auth-page">
+            <div className="auth-card">
+                <h1>Create Account</h1>
+                <p className="auth-subtitle">Join GetAJob today</p>
+
                 {error && <p className="auth-error">{error}</p>}
-                <form onSubmit={handleSubmit} noValidate>
+
+                <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label htmlFor="name">Full Name</label>
+                        <label>Full Name</label>
                         <input
                             type="text"
-                            id="name"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
                             placeholder="John Doe"
-                            aria-invalid={Boolean(fieldErrors.name)}
                         />
-                        {fieldErrors.name && <p className="field-error">{fieldErrors.name}</p>}
+                        {fieldErrors.name && <span className="field-error">{fieldErrors.name}</span>}
                     </div>
+
                     <div className="form-group">
-                        <label htmlFor="email">Email</label>
+                        <label>Email</label>
                         <input
                             type="email"
-                            id="email"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            placeholder="john@email.com"
-                            aria-invalid={Boolean(fieldErrors.email)}
+                            placeholder="john@example.com"
                         />
-                        {fieldErrors.email && <p className="field-error">{fieldErrors.email}</p>}
+                        {fieldErrors.email && <span className="field-error">{fieldErrors.email}</span>}
                     </div>
+
                     <div className="form-group">
-                        <label htmlFor="password">Password</label>
+                        <label>Password</label>
                         <input
                             type="password"
-                            id="password"
                             name="password"
                             value={formData.password}
                             onChange={handleChange}
                             placeholder="••••••••"
-                            aria-invalid={Boolean(fieldErrors.password)}
                         />
-                        {fieldErrors.password && <p className="field-error">{fieldErrors.password}</p>}
+                        {fieldErrors.password && <span className="field-error">{fieldErrors.password}</span>}
                     </div>
+
                     <div className="form-group">
-                        <label htmlFor="role">I am a...</label>
-                        <select
-                            id="role"
-                            name="role"
-                            value={formData.role}
-                            onChange={handleChange}
-                        >
+                        <label>Profile Picture (optional)</label>
+                        <input
+                            type="file"
+                            name="profileImage"
+                            accept="image/jpeg, image/png"
+                            onChange={handleImageChange}
+                        />
+                        {fieldErrors.profileImage && <span className="field-error">{fieldErrors.profileImage}</span>}
+                        <small style={{ color: '#999', fontSize: '12px' }}>JPG or PNG, max 2MB</small>
+                    </div>
+
+                    <div className="form-group">
+                        <label>I am a...</label>
+                        <select name="role" value={formData.role} onChange={handleChange}>
                             <option value="applicant">Job Seeker</option>
                             <option value="employer">Employer</option>
                         </select>
                     </div>
+
                     <button type="submit" className="auth-btn" disabled={loading}>
-                        {loading ? 'Creating account...' : 'Register'}
+                        {loading ? 'Creating Account...' : 'Create Account'}
                     </button>
                 </form>
+
                 <p className="auth-switch">
                     Already have an account? <Link to="/login">Login</Link>
                 </p>

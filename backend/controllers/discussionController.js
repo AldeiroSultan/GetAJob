@@ -1,12 +1,11 @@
-const Comment = require('../models/Comment');
-const Job = require('../models/Job');
+const discussionService = require('../services/discussionService');
+
+// Discussion controller - handles HTTP request/response coordination
 
 // @desc Get all comments for a job
 const getComments = async (req, res) => {
     try {
-        const comments = await Comment.find({ job: req.params.jobId })
-            .populate('author', 'name role')
-            .sort({ createdAt: 1 });
+        const comments = await discussionService.getComments(req.params.jobId);
         res.json(comments);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -15,47 +14,31 @@ const getComments = async (req, res) => {
 
 // @desc Post a comment
 const postComment = async (req, res) => {
-    const { content } = req.body;
-
-    if (!content || content.trim() === '') {
-        return res.status(400).json({ message: 'Comment cannot be empty' });
-    }
-
     try {
-        const job = await Job.findById(req.params.jobId);
-        if (!job) {
-            return res.status(404).json({ message: 'Job not found' });
-        }
-
-        const comment = await Comment.create({
-            job: req.params.jobId,
-            author: req.user._id,
-            content,
-        });
-
-        const populated = await comment.populate('author', 'name role');
-        res.status(201).json(populated);
+        const comment = await discussionService.postComment(
+            req.params.jobId,
+            req.user._id,
+            req.body.content
+        );
+        res.status(201).json(comment);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        const statusCode = error.message === 'Job not found' ? 404 : 400;
+        res.status(statusCode).json({ message: error.message });
     }
 };
 
 // @desc Delete a comment
 const deleteComment = async (req, res) => {
     try {
-        const comment = await Comment.findById(req.params.commentId);
-        if (!comment) {
-            return res.status(404).json({ message: 'Comment not found' });
-        }
-
-        if (comment.author.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-            return res.status(403).json({ message: 'Not authorized' });
-        }
-
-        await comment.deleteOne();
+        await discussionService.deleteComment(
+            req.params.commentId,
+            req.user._id,
+            req.user.role
+        );
         res.json({ message: 'Comment deleted' });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        const statusCode = error.statusCode || (error.message === 'Comment not found' ? 404 : 500);
+        res.status(statusCode).json({ message: error.message });
     }
 };
 
